@@ -1,0 +1,58 @@
+* {
+    scrollbar-width: none;
+}
+
+body {
+    margin: 0;
+}
+
+header {
+    text-align: center;
+}
+
+div#chat-container {
+    display: flex;
+    font-family: 'Nunito', sans-serif;
+    flex-flow: column;
+    height: 70vh;
+    margin: 10vh auto;
+    width: 50%;
+}
+
+div#output {
+    height: 53vh;
+    overflow-y: auto;
+}
+div#output::-webkit-scrollbar {
+    display: none;
+}
+div#output, div#actions {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+}
+div#actions {
+    height: 2vh;
+}
+
+textarea {
+    height: 15vh;
+    resize: none;
+}
+input:focus, textarea:focus {
+    outline: none;
+}
+input#username {
+    font-weight: bold;
+    text-align: center;
+}
+::placeholder {
+    *color: black;
+    font-weight: normal;
+    font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.careless-whisper {
+    color: deeppink;
+}
