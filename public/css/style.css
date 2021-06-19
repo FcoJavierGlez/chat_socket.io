@@ -7,7 +7,20 @@ body {
 }
 
 header {
-    text-align: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+    display: flex;
+    height: 10vh;
+}
+h1 {
+    margin: 0 auto;
+}
+
+main {
+    align-items: center;
+    display: flex;
+    height: 90vh;
 }
 
 div#chat-container {
@@ -15,20 +28,16 @@ div#chat-container {
     font-family: 'Nunito', sans-serif;
     flex-flow: column;
     height: 70vh;
-    margin: 10vh auto;
+    margin: 0 auto;
     width: 50%;
 }
 
 div#output {
-    height: 53vh;
+    height: 65vh;
     overflow-y: auto;
 }
 div#output::-webkit-scrollbar {
     display: none;
-}
-div#output, div#actions {
-    /* border-right: 1px solid black;
-    border-left: 1px solid black; */
 }
 div#actions {
     height: 2vh;
@@ -59,7 +68,10 @@ textarea::-webkit-scrollbar {
 input:focus, textarea:focus {
     outline: none;
 }
-input#username {
+#username {
+    border: 1px solid black;
+    border-radius: 50px;
+    font-size: 1.25rem;
     font-weight: bold;
     text-align: center;
 }
@@ -98,4 +110,20 @@ button .fas, button .far {
 
 .careless-whisper {
     color: deeppink;
+}
+
+.emoji-picker {
+    background-color: #303841;
+    border-radius: 5px;
+    display: flex;
+    height: 262px;
+    margin: 5px auto;
+    width: 97%;
+}
+#emoji-gestures {
+    height: auto;
+}
+
+.hidden {
+    display: none;
 }

@@ -15,9 +15,14 @@ const socket = io();
         const USERNAME    = document.getElementById("username");
         const BUTTON_SEND = document.getElementById("send");
         const BUTTON_ICON = document.getElementById("icons-button");
+        const ICON_LIST   = document.getElementById("icon-list");
         const OUTPUT      = document.getElementById("output");
         const ACTIONS     = document.getElementById("actions");
     
+        $("#icon-list").disMojiPicker();
+        twemoji.parse(document.body);
+
+
         const sendMessage = ev => {
             ev.preventDefault();
             if (MESSAGE.value == '' || USERNAME.value == '') return;
@@ -26,6 +31,8 @@ const socket = io();
             socket.emit( 'chat:message', message );
             socket.emit( 'chat:typing', { from: USERNAME.value, message: '' } );
             MESSAGE.value = "";
+            ICON_LIST.className = 'hidden';
+            OUTPUT.removeAttribute('style');
         }
     
         socket.on('chat:message', (data) => {   //Actualización del chat
@@ -67,8 +74,18 @@ const socket = io();
 
         //Add icon into message
         BUTTON_ICON.addEventListener("click", () => {
-            MESSAGE.value += `\u{1F600}`;
-            MESSAGE.focus();
+            ICON_LIST.classList.toggle('hidden');
+            ICON_LIST.className == 'hidden' ? 
+                OUTPUT.removeAttribute('style') :
+                OUTPUT.style.height = '40vh';
         });
+
+        $("#emojis").picker(
+            emoji => {
+                MESSAGE.value += emoji;
+                MESSAGE.focus();
+            }
+        );
+
     });
 }

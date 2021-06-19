@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/main.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
+        <script src="js/DisMojiPicker.js"></script>
+        <script src="js/main.js"></script>
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/style.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
+        <link href="css/emojis.css" rel="stylesheet" />
+        <link rel="stylesheet" href="css/style.css">
 
-    <title>Chat</title>
-</head>
-<body>
-    <header>
-        <h1>Chat with Socket.io</h1>
-    </header>
-    <main>
-        <div id = "chat-container">
-            <input type="text" name="username" id="username" placeholder="Username">
-            <div id = "chat-window">
-                <div id = "output"></div>
-                <div id = "actions"></div>
+        <title>Chat</title>
+    </head>
+    <body>
+        <header>
+            <h1>Chat with Socket.io</h1>
+        </header>
+        <main>
+            <div id = "chat-container">
+                <input type="text" name="username" id="username" placeholder="Username">
+                <div id = "chat-window">
+                    <div id = "output"></div>
+                    <div id = "actions"></div>
+                </div>
+                <div class="message-box">
+                    <button id="icons-button">
+                        <i class="fas fa-laugh"></i>
+                    </button>
+                    <textarea name="message" id="message" placeholder="Message"></textarea>
+                    <button id="send">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div id="icon-list" class="hidden"></div>
             </div>
-            <div class="message-box">
-                <button id="icons-button">
-                    <i class="fas fa-laugh"></i>
-                </button>
-                <textarea name="message" id="message" placeholder="Message"></textarea>
-                <button id="send">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            <div id="icon-list"></div>
-        </div>
-    </main>
-</body>
+        </main>
+    </body>
 </html>
