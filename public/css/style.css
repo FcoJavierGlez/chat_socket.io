@@ -27,16 +27,34 @@ div#output::-webkit-scrollbar {
     display: none;
 }
 div#output, div#actions {
-    border-right: 1px solid black;
-    border-left: 1px solid black;
+    /* border-right: 1px solid black;
+    border-left: 1px solid black; */
 }
 div#actions {
     height: 2vh;
 }
-
+.message-box {
+    *background-color: antiquewhite;
+    border: 1px solid black;
+    border-radius: 30px;
+    display: flex;
+    *padding: 0 20px;
+}
+#icons-button {
+    align-items: center;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
 textarea {
-    height: 15vh;
+    border: none;
+    flex-grow: 10;
+    height: 4vh;
+    padding: 2px 5px;
     resize: none;
+}
+textarea::-webkit-scrollbar {
+    display: none;
 }
 input:focus, textarea:focus {
     outline: none;
@@ -45,8 +63,33 @@ input#username {
     font-weight: bold;
     text-align: center;
 }
+button {
+    background-color: rgb(245,245,245);
+    border: none;
+    flex-grow: 1;
+}
+button:hover {
+    background-color: #EEE;
+    cursor: pointer;
+}
+button#send {
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+}
+button#icons-button {
+    border-top-left-radius: 22px;
+    border-bottom-left-radius: 22px;
+}
+button .fas, button .far {
+    font-size: 20px;
+}
+.fa-paper-plane {
+    color: cornflowerblue;
+}
+.fa-laugh {
+    color: lightsalmon;
+}
 ::placeholder {
-    *color: black;
     font-weight: normal;
     font-size: 16px;
     text-align: center;

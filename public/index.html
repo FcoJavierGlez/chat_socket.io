@@ -8,6 +8,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/main.js"></script>
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css">
 
     <title>Chat</title>
@@ -23,8 +24,16 @@
                 <div id = "output"></div>
                 <div id = "actions"></div>
             </div>
-            <textarea name="message" id="message" placeholder="Message"></textarea>
-            <!-- <button id="send">Send</button> -->
+            <div class="message-box">
+                <button id="icons-button">
+                    <i class="fas fa-laugh"></i>
+                </button>
+                <textarea name="message" id="message" placeholder="Message"></textarea>
+                <button id="send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div id="icon-list"></div>
         </div>
     </main>
 </body>

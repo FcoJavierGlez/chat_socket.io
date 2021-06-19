@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
     //io.sockets.emit('chat:users', socket.id);
     socket.on('chat:message', data => {
         const date = new Date();
-        data.time = `${functions.formatDate( date.getHours() )}:${functions.formatDate( date.getMinutes() )}:${functions.formatDate( date.getSeconds() )}`;
+        data.time = `${formatDate( date.getHours() )}:${formatDate( date.getMinutes() )}:${formatDate( date.getSeconds() )}`;
         io.sockets.emit('chat:message', data);
     });
     socket.on('chat:typing', data => {
