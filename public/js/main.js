@@ -10,6 +10,34 @@ const socket = io();
         });
         return recipient;
     }
+
+    const rollDices = command => {
+        let match      = command.match(/^\/([1-9]|1[0-9]|20)?d(2|4|6|8|10|12|20|30|100)((\+|\-)(\d{1,}))?(\*(2|3|4|5|6|7|8|9|10|11|12))?$/);
+        let variacion  = match[3] === undefined ? 0 : (match[4] === "-" ? (match[5] * -1) : parseInt(match[5]));
+        let numDados   = match[1] === undefined ? 1 : match[1];
+        let numTiradas = match[7] === undefined ? 1 : match[7];
+        let tipoDado   = match[2];
+        let resultados = [];
+        
+        for (let i = 1; i <= numTiradas; i++) {
+            let tiradas = [];
+            for (let j = 1; j <= numDados; j++) 
+                tiradas.push( parseInt(Math.random() * tipoDado + 1) );
+            resultados.push( `<br/>&emsp;&emsp;&emsp;&emsp;(${tiradas.toString().replace(/,/g,"+")})${match[3] === undefined ? "" : match[3]}: <b>${tiradas.reduce( (acc,n) => acc + n) + variacion}</b>` );
+        }
+        return `<b>Tirada${numTiradas > 1 ? 's' : ''}:</b><br/> ${ resultados.reduce( (e,text) => text += e ) }`;
+    }
+
+    const executeCommand = input => {
+        let command = '';
+        switch (input) {
+            case ( command = input.match(/^\/([1-9]|1[0-9]|20)?d(2|4|6|8|10|12|20|30|100)((\+|\-)(\d{1,}))?(\*(2|3|4|5|6|7|8|9|10|11|12))?$/)?.input ):
+                return rollDices(input);
+            default:
+                return input;
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const MESSAGE     = document.getElementById("message");
         const USERNAME    = document.getElementById("username");
@@ -27,7 +55,19 @@ const socket = io();
             ev.preventDefault();
             if (MESSAGE.value == '' || USERNAME.value == '') return;
             let recipient = getRecipient( MESSAGE.value );
-            let message = { from: USERNAME.value, to: recipient, message: recipient == '' ? MESSAGE.value : MESSAGE.value.match(/\@\w+\s(.+)/)?.[1] };
+            let message = { 
+                from: USERNAME.value, 
+                to: recipient, 
+                message: recipient == '' ? 
+                    executeCommand( MESSAGE.value ) : 
+                    executeCommand( MESSAGE.value.replace(/\s?\,\s?(\w)/, ' $1').match(/\@\w+\s([^\,].+)$/)?.[1] )
+            };
+            /* let message = { 
+                from: USERNAME.value, 
+                to: recipient, 
+                message: recipient == '' ? MESSAGE.value : MESSAGE.value.replace(/\s?\,\s?(\w)/, ' $1').match(/\@\w+\s([^\,].+)$/)?.[1]
+            }; */
+            console.log(message);
             socket.emit( 'chat:message', message );
             socket.emit( 'chat:typing', { from: USERNAME.value, message: '' } );
             MESSAGE.value = "";
