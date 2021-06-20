@@ -24,6 +24,7 @@ const io = socketIo( server );
 io.on('connection', (socket) => {
     //const USERS = [];
     console.log('new connetion', socket.id);
+    //console.log('Client', socket.client);
     //io.sockets.emit('chat:users', socket.id);
     socket.on('chat:message', data => {
         const date = new Date();
