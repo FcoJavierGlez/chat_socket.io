@@ -1,9 +1,9 @@
 const socket = io();
 {
-    const capitalize = string => string.replace(/^\w/, e => e.toUpperCase() );
+    const capitalize = string => string.split('').map( (e,i) => i == 0 ? e.toUpperCase() : e ).join('');
 
     const getRecipient = message => {
-        let conjunto = [...message.matchAll(/\@(\w+)/g)];
+        let conjunto = [...message.matchAll(/\@([\wáéíóú]+)/gi)];
         let recipient = '';
         conjunto.forEach( (e,i) => {
             recipient += conjunto.length - 1 == i ? e[1] : `${e[1]}, `;
@@ -60,14 +60,9 @@ const socket = io();
                 to: recipient, 
                 message: recipient == '' ? 
                     executeCommand( MESSAGE.value ) : 
-                    executeCommand( MESSAGE.value.replace(/\s?\,\s?(\w)/, ' $1').match(/\@\w+\s([^\,].+)$/)?.[1] )
+                    executeCommand( MESSAGE.value.replace(/\s?\,\s?(\w)/, ' $1').match(/\@[\wáéíóú]+\s([^\,].+)$/i)?.[1] )
             };
-            /* let message = { 
-                from: USERNAME.value, 
-                to: recipient, 
-                message: recipient == '' ? MESSAGE.value : MESSAGE.value.replace(/\s?\,\s?(\w)/, ' $1').match(/\@\w+\s([^\,].+)$/)?.[1]
-            }; */
-            console.log(message);
+            //console.log(message);
             socket.emit( 'chat:message', message );
             socket.emit( 'chat:typing', { from: USERNAME.value, message: '' } );
             MESSAGE.value = "";
@@ -77,10 +72,12 @@ const socket = io();
     
         socket.on('chat:message', (data) => {   //Actualización del chat
             //console.log(data);
+            //console.log(data.to);
+            //console.log(`To: ${data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}`);
             if ( data.to !== '' && ( data.from == USERNAME.value || data.to.match( USERNAME.value.toLowerCase() ) ) )
                 OUTPUT.innerHTML += `
                     <p class='careless-whisper'}'>
-                        <b>${data.time} ${data.from !== USERNAME.value ? 'From' : 'To'} ${data.from !== USERNAME.value ? "@"+data.from : capitalize(data.to.replace( /\b(\w)\,?/g, e => "@"+capitalize(e) ) )}:</b> ${data.message}
+                        <b>${data.time} ${data.from !== USERNAME.value ? 'From' : 'To'} ${data.from !== USERNAME.value ? "@"+data.from : data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}:</b> ${data.message}
                     </p>`;
             else if (data.to == '')
                 OUTPUT.innerHTML += `
