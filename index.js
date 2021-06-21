@@ -26,6 +26,9 @@ io.on('connection', (socket) => {
     console.log('new connetion', socket.id);
     //console.log('Client', socket.client);
     //io.sockets.emit('chat:users', socket.id);
+    socket.on('disconnect', function() {
+        console.log('Got disconnect!', socket.id);
+    });
     socket.on('chat:message', data => {
         const date = new Date();
         data.time = `${formatDate( date.getHours() )}:${formatDate( date.getMinutes() )}:${formatDate( date.getSeconds() )}`;
