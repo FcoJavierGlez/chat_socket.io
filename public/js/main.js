@@ -32,31 +32,71 @@ const socket = io();
         let command = '';
         switch (input) {
             case ( command = input.match(/^\/([1-9]|1[0-9]|20)?d(2|4|6|8|10|12|20|30|100)((\+|\-)(\d{1,}))?(\*(2|3|4|5|6|7|8|9|10|11|12))?$/)?.input ):
-                return rollDices(input);
+                return rollDices(command);
             default:
                 return input;
         }
     }
 
+    const getUserList = userList => {
+        let list = '';
+        userList = userList.filter( e => e.name !== '' );
+        userList.forEach( e => {
+            list += `
+                <div class='user'>
+                    <div class="connected"></div>${e.name}
+                </div>`;
+        });
+        return list;
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
-        const MESSAGE     = document.getElementById("message");
-        const USERNAME    = document.getElementById("username");
-        const BUTTON_SEND = document.getElementById("send");
-        const BUTTON_ICON = document.getElementById("icons-button");
-        const ICON_LIST   = document.getElementById("icon-list");
-        const OUTPUT      = document.getElementById("output");
-        const ACTIONS     = document.getElementById("actions");
+        const CHAT_CONTAINER = document.getElementById("chat-container");
+        const LOGIN          = document.getElementById("login");
+        const INPUT_USERNAME = document.getElementById("input_username");
+        const SEND_USERNAME  = document.getElementById("send_username");
+        const USERS_LIST     = document.getElementById("users_list");
+        const MESSAGE        = document.getElementById("message");
+        const USERNAME       = document.getElementById("username");
+        const BUTTON_SEND    = document.getElementById("send");
+        const BUTTON_ICON    = document.getElementById("icons-button");
+        const ICON_LIST      = document.getElementById("icon-list");
+        const OUTPUT         = document.getElementById("output");
+        const ACTIONS        = document.getElementById("actions");
+
+        let login = false;
+        let userName = '';
     
         $("#icon-list").disMojiPicker();
         twemoji.parse(document.body);
 
+        /* Introducir nombre usuario */
+        INPUT_USERNAME.addEventListener("keyup", () => {
+            if (INPUT_USERNAME.value.length >= 4) return;
+            INPUT_USERNAME.value = INPUT_USERNAME.value.replace(/\s+/g, "");
+        });
+        SEND_USERNAME.addEventListener("click", () => {
+            socket.emit( 'chat:username-select', capitalize(INPUT_USERNAME.value) );
+        });
+        socket.on( 'chat:validate-username', data => {
+            //console.log(`Validación username: ${data}`);
+            if (!data) {
+                INPUT_USERNAME.nextElementSibling.innerText = 'Nick not available';
+                return;
+            }
+            LOGIN.style.display = 'none';
+            CHAT_CONTAINER.removeAttribute("style");
+            login = true;
+            USERNAME.innerText = userName = capitalize(INPUT_USERNAME.value);
+        });
 
+        /* Enviar mensaje */
         const sendMessage = ev => {
             ev.preventDefault();
-            if (MESSAGE.value == '' || USERNAME.value == '') return;
+            if (MESSAGE.value == '' || userName == '') return;
             let recipient = getRecipient( MESSAGE.value );
             let message = { 
-                from: USERNAME.value, 
+                from: userName, 
                 to: recipient, 
                 message: recipient == '' ? 
                     executeCommand( MESSAGE.value ) : 
@@ -64,33 +104,50 @@ const socket = io();
             };
             //console.log(message);
             socket.emit( 'chat:message', message );
-            socket.emit( 'chat:typing', { from: USERNAME.value, message: '' } );
+            socket.emit( 'chat:typing', { from: userName, message: '' } );
             MESSAGE.value = "";
             ICON_LIST.className = 'hidden';
             OUTPUT.removeAttribute('style');
         }
     
-        socket.on('chat:message', (data) => {   //Actualización del chat
+        /* Recibir mensajes */
+        socket.on('chat:message', data => {   //Actualización del chat
             //console.log(data);
             //console.log(data.to);
             //console.log(`To: ${data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}`);
-            if ( data.to !== '' && ( data.from == USERNAME.value || data.to.match( USERNAME.value.toLowerCase() ) ) )
-                OUTPUT.innerHTML += `
-                    <p class='careless-whisper'}'>
-                        <b>${data.time} ${data.from !== USERNAME.value ? 'From' : 'To'} ${data.from !== USERNAME.value ? "@"+data.from : data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}:</b> ${data.message}
-                    </p>`;
-            else if (data.to == '')
-                OUTPUT.innerHTML += `
-                    <p>
-                        <b>${data.time} ${data.from}:</b> ${data.message}
-                    </p>`;
-                
+            if (!login) return;
+            if (data.alert) {
+                console.log(data);
+                if ( /^\s/.test(data.message) ) return;
+                OUTPUT.innerHTML += `<p class='server-message'>${data.message}</p>`;
+            }
+            else {
+                if ( data.to !== '' && ( data.from == userName || data.to.match( userName.toLowerCase() ) ) ) 
+                    OUTPUT.innerHTML += `
+                        <p class='careless-whisper'>
+                            <b>${data.time} ${data.from !== userName ? 'From' : 'To'} ${data.from !== userName ? "@"+data.from : data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}:</b> ${data.message}
+                        </p>`;
+                else if (data.to == '')
+                    OUTPUT.innerHTML += `
+                        <p>
+                            <b>${data.time} ${ data.from == userName ? 'Me' : data.from }:</b> ${data.message}
+                        </p>`;
+            }
             OUTPUT.scroll(0, OUTPUT.clientHeight );
         });
-        socket.on('chat:typing', (data) => {    //Mensaje de quién está escribiendo
-            if (data.from == USERNAME.value) return;
+
+        //Lista de usuarios conectados
+        socket.on( 'chat:users-list', data => {
+            console.log(`users-list: ${data}`);
+            if (!login) return;
+            if (data) USERS_LIST.innerHTML = getUserList(data);
+        });
+
+        socket.on('chat:typing', data => {    //Mensaje de quién está escribiendo
+            if (data.from == userName) return;
             ACTIONS.innerHTML = data.message == '' ? '' : `<small>${data.from} is writting now</small>`;
         });
+
         socket.on('chat:users', data => {
             console.log(data);
         });
@@ -101,11 +158,11 @@ const socket = io();
             if (ev.key == 'Enter' || ev.key == 'NumpadEnter') 
                 sendMessage(ev);
             else {
-                if (USERNAME.value == '') return;
+                if (userName == '') return;
                 if ( /^\@/.test(MESSAGE.value) || (ev.code == 'Backspace' || ev.code == 'Delete' && MESSAGE.value == '') ) 
-                    socket.emit( 'chat:typing', { from: USERNAME.value, message: '' } );
+                    socket.emit( 'chat:typing', { from: userName, message: '' } );
                 else
-                    socket.emit( 'chat:typing', { from: USERNAME.value, message: MESSAGE.value } );
+                    socket.emit( 'chat:typing', { from: userName, message: MESSAGE.value } );
             }
         });
 

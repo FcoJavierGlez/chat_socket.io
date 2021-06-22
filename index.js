@@ -2,6 +2,8 @@
 
 const formatDate = date => date < 10 ? `0${date}` : date;
 
+let usersList = [];
+
 const path = require('path');
 const express = require('express');
 const app = express();
@@ -22,18 +24,41 @@ const server = app.listen( app.get('port'), () => {
 //Websockets
 const io = socketIo( server );
 io.on('connection', (socket) => {
-    //const USERS = [];
     console.log('new connetion', socket.id);
     //console.log('Client', socket.client);
-    //io.sockets.emit('chat:users', socket.id);
-    socket.on('disconnect', function() {
-        console.log('Got disconnect!', socket.id);
+
+    usersList.push( {id: socket.id, name: '' } );
+    io.sockets.emit( 'chat:users', usersList.map( e => e.name ) );
+
+    console.log('users list:', usersList);
+
+    socket.on('chat:username-select', data => { //select username
+        let user = {};
+        if ( usersList.find( e => e.name == data ) !== undefined) 
+            return socket.emit('chat:validate-username', false);
+        usersList.find( e => e.id == socket.id ).name = data;
+        user = usersList.find( e => e.id == socket.id )
+        //console.log( user );
+        socket.emit('chat:validate-username', true);
+        socket.broadcast.emit('chat:message', { alert:true, message: `${user.name} connected` });
+        io.sockets.emit('chat:users-list', usersList);
     });
+
+    socket.on('disconnect', function() {    //disconnect
+        console.log('Got disconnect!', socket.id);
+        let userName = usersList.find( e => e.id == socket.id )['name'];
+        usersList = usersList.filter( e => e.id !== socket.id );
+        io.sockets.emit( 'chat:users', usersList.map( e => e.name ) );
+        socket.broadcast.emit('chat:message', { alert:true, message: `${userName} disconnected` });
+        io.sockets.emit('chat:users-list', usersList);
+    });
+
     socket.on('chat:message', data => {
         const date = new Date();
         data.time = `${formatDate( date.getHours() )}:${formatDate( date.getMinutes() )}:${formatDate( date.getSeconds() )}`;
         io.sockets.emit('chat:message', data);
     });
+
     socket.on('chat:typing', data => {
         socket.broadcast.emit('chat:typing', data);
     });

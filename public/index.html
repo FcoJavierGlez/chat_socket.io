@@ -22,22 +22,32 @@
             <h1>Chat with Socket.io</h1>
         </header>
         <main>
-            <div id = "chat-container">
-                <input type="text" name="username" id="username" placeholder="Username">
-                <div id = "chat-window">
-                    <div id = "output"></div>
-                    <div id = "actions"></div>
+            <div id="login">
+                <input type="text" id="input_username" placeholder="username">
+                <span id="login_alert"></span>
+                <div>
+                    <button id="send_username">Accept</button>
                 </div>
-                <div class="message-box">
-                    <button id="icons-button">
-                        <i class="fas fa-laugh"></i>
-                    </button>
-                    <textarea name="message" id="message" placeholder="Message"></textarea>
-                    <button id="send">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+            </div>
+            <div id = "chat-container" style="display:none;">
+                <div id="users_list"></div>
+                <div class="chat-box">
+                    <div id="username"></div>
+                    <div id = "chat-window">
+                        <div id = "output"></div>
+                        <div id = "actions"></div>
+                    </div>
+                    <div class="message-box">
+                        <button id="icons-button">
+                            <i class="fas fa-laugh"></i>
+                        </button>
+                        <textarea name="message" id="message" placeholder="Message"></textarea>
+                        <button id="send">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div id="icon-list" class="hidden"></div>
                 </div>
-                <div id="icon-list" class="hidden"></div>
             </div>
         </main>
     </body>
