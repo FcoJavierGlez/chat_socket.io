@@ -202,9 +202,14 @@ button .fas, button .far {
 
 p.server-message {
     text-align: center;
-    color: lightskyblue;
     font-style: italic;
     font-size: 13.3333px;
+}
+p.user-connected {
+    color: limegreen;
+}
+p.user-disconnected {
+    color: lightcoral;
 }
 
 .hidden {

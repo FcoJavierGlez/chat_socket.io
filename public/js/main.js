@@ -79,7 +79,6 @@ const socket = io();
             socket.emit( 'chat:username-select', capitalize(INPUT_USERNAME.value) );
         });
         socket.on( 'chat:validate-username', data => {
-            //console.log(`Validación username: ${data}`);
             if (!data) {
                 INPUT_USERNAME.nextElementSibling.innerText = 'Nick not available';
                 return;
@@ -102,7 +101,6 @@ const socket = io();
                     executeCommand( MESSAGE.value ) : 
                     executeCommand( MESSAGE.value.replace(/\s?\,\s?(\w)/, ' $1').match(/\@[\wáéíóú]+\s([^\,].+)$/i)?.[1] )
             };
-            //console.log(message);
             socket.emit( 'chat:message', message );
             socket.emit( 'chat:typing', { from: userName, message: '' } );
             MESSAGE.value = "";
@@ -112,14 +110,10 @@ const socket = io();
     
         /* Recibir mensajes */
         socket.on('chat:message', data => {   //Actualización del chat
-            //console.log(data);
-            //console.log(data.to);
-            //console.log(`To: ${data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}`);
             if (!login) return;
             if (data.alert) {
-                console.log(data);
                 if ( /^\s/.test(data.message) ) return;
-                OUTPUT.innerHTML += `<p class='server-message'>${data.message}</p>`;
+                OUTPUT.innerHTML += `<p class='server-message user-${/\sconnected$/.test(data.message) ? 'connected' : 'disconnected'}'>${data.message}</p>`;
             }
             else {
                 if ( data.to !== '' && ( data.from == userName || data.to.match( userName.toLowerCase() ) ) ) 
@@ -138,7 +132,6 @@ const socket = io();
 
         //Lista de usuarios conectados
         socket.on( 'chat:users-list', data => {
-            console.log(`users-list: ${data}`);
             if (!login) return;
             if (data) USERS_LIST.innerHTML = getUserList(data);
         });
@@ -146,10 +139,6 @@ const socket = io();
         socket.on('chat:typing', data => {    //Mensaje de quién está escribiendo
             if (data.from == userName) return;
             ACTIONS.innerHTML = data.message == '' ? '' : `<small>${data.from} is writting now</small>`;
-        });
-
-        socket.on('chat:users', data => {
-            console.log(data);
         });
     
         //Send message

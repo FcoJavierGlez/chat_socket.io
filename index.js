@@ -30,8 +30,6 @@ io.on('connection', (socket) => {
     usersList.push( {id: socket.id, name: '' } );
     io.sockets.emit( 'chat:users', usersList.map( e => e.name ) );
 
-    console.log('users list:', usersList);
-
     socket.on('chat:username-select', data => { //select username
         let user = {};
         if ( usersList.find( e => e.name == data ) !== undefined) 
@@ -39,6 +37,7 @@ io.on('connection', (socket) => {
         usersList.find( e => e.id == socket.id ).name = data;
         user = usersList.find( e => e.id == socket.id )
         //console.log( user );
+        console.log('users list:', usersList);
         socket.emit('chat:validate-username', true);
         socket.broadcast.emit('chat:message', { alert:true, message: `${user.name} connected` });
         io.sockets.emit('chat:users-list', usersList);
