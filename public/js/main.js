@@ -72,8 +72,7 @@ const socket = io();
 
         /* Introducir nombre usuario */
         INPUT_USERNAME.addEventListener("keyup", () => {
-            if (INPUT_USERNAME.value.length >= 4) return;
-            INPUT_USERNAME.value = INPUT_USERNAME.value.replace(/\s+/g, "");
+            INPUT_USERNAME.value = INPUT_USERNAME.value.replace(/\s+/g, "").slice(0,10);;
         });
         SEND_USERNAME.addEventListener("click", () => {
             socket.emit( 'chat:username-select', capitalize(INPUT_USERNAME.value) );
