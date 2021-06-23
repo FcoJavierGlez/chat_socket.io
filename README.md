@@ -6,7 +6,7 @@
 <div style="text-align: left;">
     <img src="https://img.shields.io/badge/Node.js-12.14.1-brightgreen" alt="version_node">
     <img src="https://img.shields.io/badge/Socket.io-4.1.2-lightgrey" alt="version_socket.io">
-    <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="version">
+    <img src="https://img.shields.io/badge/version-1.0.1-blue" alt="version">
     <a href="https://twitter.com/intent/follow?screen_name=Fco_Javier_Glez" target="_blank">
         <img src="https://img.shields.io/twitter/follow/Fco_Javier_Glez?style=social&logo=twitter" alt="follow on Twitter">
     </a>
