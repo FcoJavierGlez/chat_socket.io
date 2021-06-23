@@ -1,6 +1,4 @@
-//import { functions } from './functions';
-
-const formatDate = date => date < 10 ? `0${date}` : date;
+const formatDate = require('./functions');
 
 let usersList = [];
 

@@ -28,13 +28,13 @@ const socket = io();
         return `<b>Tirada${numTiradas > 1 ? 's' : ''}:</b><br/> ${ resultados.reduce( (e,text) => text += e ) }`;
     }
 
-    const executeCommand = input => {
+    const executeCommand = message => {
         let command = '';
-        switch (input) {
-            case ( command = input.match(/^\/([1-9]|1[0-9]|20)?d(2|4|6|8|10|12|20|30|100)((\+|\-)(\d{1,}))?(\*(2|3|4|5|6|7|8|9|10|11|12))?$/)?.input ):
+        switch (message) {
+            case ( command = message.match(/^\/([1-9]|1[0-9]|20)?d(2|4|6|8|10|12|20|30|100)((\+|\-)(\d{1,}))?(\*(2|3|4|5|6|7|8|9|10|11|12))?$/)?.input ):
                 return rollDices(command);
             default:
-                return input;
+                return message;
         }
     }
 
@@ -118,10 +118,10 @@ const socket = io();
                 if ( data.to !== '' && ( data.from == userName || data.to.match( userName.toLowerCase() ) ) ) 
                     OUTPUT.innerHTML += `
                         <p class='careless-whisper'>
-                            <b>${data.time} ${data.from !== userName ? 'From' : 'To'} 
-                                "@"+${data.from !== userName ? 
-                                    data.from : 
-                                    data.to.split(', ').map( e => capitalize(e) ).join(', ')}:</b> 
+                            <b>
+                                ${data.time} ${data.from !== userName ? 'From' : 'To'} 
+                                @${data.from !== userName ? data.from : data.to.split(', ').map( e => capitalize(e) ).join(', ')}:
+                            </b> 
                                 ${data.message}
                         </p>`;
                 else if (data.to == '')
@@ -130,7 +130,7 @@ const socket = io();
                             <b>${data.time} ${ data.from == userName ? 'Me' : data.from }:</b> ${data.message}
                         </p>`;
             }
-            OUTPUT.scroll(0, OUTPUT.clientHeight );
+            OUTPUT.scroll(0, OUTPUT.scrollHeight );
         });
 
         //Lista de usuarios conectados
