@@ -118,7 +118,11 @@ const socket = io();
                 if ( data.to !== '' && ( data.from == userName || data.to.match( userName.toLowerCase() ) ) ) 
                     OUTPUT.innerHTML += `
                         <p class='careless-whisper'>
-                            <b>${data.time} ${data.from !== userName ? 'From' : 'To'} ${data.from !== userName ? "@"+data.from : data.to.split(', ').map( e => `@${capitalize(e)}` ).join(', ')}:</b> ${data.message}
+                            <b>${data.time} ${data.from !== userName ? 'From' : 'To'} 
+                                "@"+${data.from !== userName ? 
+                                    data.from : 
+                                    data.to.split(', ').map( e => capitalize(e) ).join(', ')}:</b> 
+                                ${data.message}
                         </p>`;
                 else if (data.to == '')
                     OUTPUT.innerHTML += `
